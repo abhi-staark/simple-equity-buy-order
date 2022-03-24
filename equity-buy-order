@@ -1,0 +1,71 @@
+@author: abhishekpatil
+"""
+
+import logging
+import datetime
+import statistics
+from time import sleep
+from alice_blue import *
+
+#coniguration
+
+username = 'username'
+password = 'password'
+twoFA = 'twoFA'
+api_secret ='api_secret'
+app_id = 'app_id'
+twoFA ='twoFA'
+#logging.basicConfig(level=logging.DEBUG) #optional for getting debug messages
+
+alice = None
+quantity = 2
+
+
+#function to get all account details
+def get_account_details():
+    print("printing info")
+    print(alice.get_balance()) # get balance / margin limits
+    print(alice.get_profile()) # get profile
+    print(alice.get_daywise_positions()) # get daywise positions
+    print(alice.get_netwise_positions()) # get netwise positions
+    print(alice.get_holding_positions()) # get holding positions
+    
+    
+
+
+ #main funtion,logging into alice account, placing a simple order
+def main():
+    global alice,username,password,twoFA,ltp,api_secret,order_placed
+    
+    while alice is None:
+        print('logging in alice')
+        try:
+            access_token = AliceBlue.login_and_get_access_token(username=username, password=password,twoFA=twoFA, api_secret=api_secret,  app_id=app_id)
+            alice = AliceBlue(username=username, password=password, access_token=access_token, master_contracts_to_download=['NSE','NFO' 'BSE'])
+        except:
+            print('login failed Alice..retrying in 3 mins')
+            sleep(100)
+            pass
+
+    
+# TransactionType.Buy, OrderType.Limit, ProductType.Delivery
+    print ("%%%%%%%%%%%%%%%%%%%%%%%%%%%%1%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    print(
+       alice.place_order(transaction_type = TransactionType.Buy,
+                         instrument = alice.get_instrument_by_symbol('NSE', 'INFY'),
+                         quantity = quantity,
+                         order_type = OrderType.Limit,
+                         product_type = ProductType.Delivery,
+                         price = 1800.00,
+                         trigger_price = None,
+                         stop_loss = None,
+                         square_off = None,
+                         trailing_sl = None,
+                         is_amo = False)
+       )
+
+
+
+main()
+#get_account_details()
+       
